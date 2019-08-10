@@ -17,7 +17,7 @@
 -include_lib("common_test/include/ct.hrl").
 
 -export([all/0, groups/0, init_per_suite/1, end_per_suite/1]).
--export([simple_return/1, fun_return/1, use_lib/1]).
+-export([simple_return/1, fun_return/1, use_lib/1, table_tests/1]).
 
 init_per_suite(Config) ->
   DataDir = ?config(data_dir, Config),
@@ -34,7 +34,7 @@ all() ->
 
 groups() ->
   [
-    {return, [parallel], [simple_return, fun_return, use_lib]}
+    {return, [parallel], [simple_return, fun_return, use_lib, table_tests]}
   ].
 
 simple_return(Config) ->
@@ -51,6 +51,9 @@ use_lib(Config) ->
   LuaDecimal = fun(B, E) -> [{<<"b">>, B}, {<<"e">>, E}] end,
   Expected = [LuaDecimal(B, E) || {B, E} <- [{13, 1}, {7, 1}, {3, 3}]],
   run_and_check(Config, "decimal_test.lua", Expected).
+
+table_tests(Config) ->
+  run_and_check(Config, "table_indexed_table.lua", [111, 222, 333]).
 
 run_tests(Config, Tests) ->
   [run_and_check(Config, Script, Expected) || {Script, Expected} <- Tests].
